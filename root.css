@@ -1,0 +1,9 @@
+:root {
+  --dark-blue: #001f82;
+  --light-blue: #005eff;
+  --extra-light-blue: #337eff;
+  --white: #ffffff;
+
+  --poppins: "Poppins", sans-serif;
+  --page-width: 90vw;
+}

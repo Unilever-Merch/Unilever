@@ -1,0 +1,180 @@
+.container_sortimento_heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  max-width: var(--page-width);
+  margin: 0 auto;
+
+  h1 {
+    font-family: var(--poppins);
+    font-size: clamp(2rem, 2vw, 3rem);
+    color: var(--dark-blue);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    max-width: 40rem;
+    padding: 1.2rem;
+    border: 2px solid var(--dark-blue);
+    border-radius: 0.8rem;
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    font-family: var(--poppins);
+    outline: none;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+
+    &:focus {
+      border-color: var(--light-blue);
+      box-shadow: 0 0 0 2px rgba(0, 94, 255, 0.1);
+    }
+  }
+
+  button {
+    padding: 1.2rem 2.4rem;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 0.8rem;
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    font-family: var(--poppins);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+
+    &:hover {
+      background-color: var(--light-blue);
+    }
+  }
+}
+
+#filtroCategoria {
+  margin: 2rem 0;
+  text-align: center;
+  width: 100%;
+
+  label {
+    font-family: var(--poppins);
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    color: var(--dark-blue);
+    margin-bottom: 1rem;
+    display: block;
+  }
+}
+
+#selectCategoria {
+  width: 100%;
+  max-width: 40rem;
+  padding: 1.2rem;
+  border: 2px solid var(--dark-blue);
+  border-radius: 0.8rem;
+  font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+  font-family: var(--poppins);
+  outline: none;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: var(--light-blue);
+    box-shadow: 0 0 0 2px rgba(0, 94, 255, 0.1);
+  }
+}
+
+#infoLoja {
+  max-width: var(--page-width);
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: var(--poppins);
+  text-align: center;
+
+  p {
+    margin: 0.5rem 0;
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    color: var(--dark-blue);
+    font-weight: 500;
+  }
+}
+
+#resultadoSortimento {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 2rem;
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+
+      th,
+      td {
+        padding: 1.6rem;
+        text-align: left;
+        font-family: var(--poppins);
+        border-bottom: 1px solid rgba(0, 31, 130, 0.1);
+      }
+
+      th {
+        background-color: var(--dark-blue);
+        color: var(--white);
+        font-weight: 600;
+        font-size: clamp(1.2rem, 1.2vw, 1.4rem);
+      }
+
+      td {
+        font-size: clamp(1.2rem, 1.2vw, 1.4rem);
+        color: var(--dark-blue);
+
+        &:first-child {
+          font-weight: 600;
+          max-width: 30rem;
+          white-space: normal;
+        }
+      }
+
+      tr:last-child {
+        td:first-child {
+          border-bottom-left-radius: 1rem;
+        }
+
+        td:last-child {
+          border-bottom-right-radius: 1rem;
+        }
+      }
+
+      tr:hover td {
+        background-color: rgba(0, 31, 130, 0.05);
+      }
+    }
+  }
+}
+
+/* Estilos para valores positivos e negativos */
+.valor-positivo {
+  color: #00C853;
+  font-weight: 600;
+}
+
+.valor-negativo {
+  color: #FF4B4B;
+  font-weight: 600;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container_sortimento_heading {
+    padding: 2rem 1rem;
+  }
+  
+  #infoLoja, #resultadoSortimento {
+    padding: 1rem;
+  }
+}
