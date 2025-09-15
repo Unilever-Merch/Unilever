@@ -18,23 +18,22 @@ function buscarRE() {
 
   const entradas = dados[re];
 
-  // Caso queira que os meses acompanhem o tamanho do VPL dinamicamente:
-  // const meses = (entradas[0]?.vpl ?? []).slice(0, 6).map((_, i) => ['JAN','FEV','MAR','ABR','MAI','JUN'][i] ?? `M${i+1}`);
-  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN'];
+  // Se quiser que o número de colunas acompanhe o tamanho do VPL:
+  // const meses = (entradas[0]?.vpl ?? []).map((_, i) => ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][i] ?? `M${i+1}`);
+  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN']; // fixo nos 6 primeiros
 
   let html = `<h2>RE: ${re}</h2>`;
   html += `<div class="table-container"><table>`;
 
-  // Cabeçalho (linha 1): Nome do PDV | Vs YTD'24 | VPL (agrupado por meses)
+  // Cabeçalho (linha 1): Nome do PDV | VPL (agrupado)
   html += `<tr>
             <th rowspan="2">Nome do PDV</th>
-            <th rowspan="2">Vs YTD'24</th>
             <th colspan="${meses.length}">VPL</th>
           </tr>`;
 
-  // Cabeçalho (linha 2): meses apenas para VPL
+  // Cabeçalho (linha 2): meses do VPL
   html += `<tr>`;
-  meses.forEach(m => html += `<th>${m}</th>`);
+  meses.forEach(m => (html += `<th>${m}</th>`));
   html += `</tr>`;
 
   // Linhas de dados
@@ -44,11 +43,8 @@ function buscarRE() {
     // Nome do PDV
     html += `<td>${entry.pdv}</td>`;
 
-    // Vs YTD'24 (comparativo_percentual)
-    html += `<td style="color:${corComparativo(entry.comparativo_percentual)}">${entry.comparativo_percentual}</td>`;
-
-    // VPL (primeiros 6 meses)
-    entry.vpl.slice(0, 6).forEach(val => {
+    // VPL (primeiros 6 valores)
+    entry.vpl.slice(0, meses.length).forEach(val => {
       html += `<td>${val}</td>`;
     });
 
@@ -61,12 +57,7 @@ function buscarRE() {
   container.innerHTML = html;
 }
 
-function corComparativo(valor) {
-  if (!valor || valor === "—" || valor === "0%") return "var(--dark-blue)";
-  if (valor.startsWith("-")) return "#FF4B4B";
-  return "#00C853";
-}
-
+// Enter para buscar
 document.getElementById("reInput").addEventListener("keypress", function (e) {
   if (e.key === "Enter") buscarRE();
 });
