@@ -1,4 +1,4 @@
-.container_consulta_heading {
+.container_sortimento_heading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,18 +50,56 @@
   }
 }
 
-#resultado {
+#filtroCategoria {
+  margin: 2rem 0;
+  text-align: center;
+  width: 100%;
+
+  label {
+    font-family: var(--poppins);
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    color: var(--dark-blue);
+    margin-bottom: 1rem;
+    display: block;
+  }
+}
+
+#selectCategoria {
+  width: 100%;
+  max-width: 40rem;
+  padding: 1.2rem;
+  border: 2px solid var(--dark-blue);
+  border-radius: 0.8rem;
+  font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+  font-family: var(--poppins);
+  outline: none;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: var(--light-blue);
+    box-shadow: 0 0 0 2px rgba(0, 94, 255, 0.1);
+  }
+}
+
+#infoLoja {
+  max-width: var(--page-width);
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: var(--poppins);
+  text-align: center;
+
+  p {
+    margin: 0.5rem 0;
+    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
+    color: var(--dark-blue);
+    font-weight: 500;
+  }
+}
+
+#resultadoSortimento {
   max-width: var(--page-width);
   margin: 0 auto;
   padding: 2rem;
-
-  h2 {
-    font-family: var(--poppins);
-    font-size: clamp(1.8rem, 1.8vw, 2.4rem);
-    color: var(--dark-blue);
-    margin-bottom: 2rem;
-    text-align: center;
-  }
 
   .table-container {
     width: 100%;
@@ -89,7 +127,6 @@
         color: var(--white);
         font-weight: 600;
         font-size: clamp(1.2rem, 1.2vw, 1.4rem);
-        text-align: center;
       }
 
       td {
@@ -104,13 +141,8 @@
       }
 
       tr:last-child {
-        td:first-child {
-          border-bottom-left-radius: 1rem;
-        }
-
-        td:last-child {
-          border-bottom-right-radius: 1rem;
-        }
+        td:first-child { border-bottom-left-radius: 1rem; }
+        td:last-child  { border-bottom-right-radius: 1rem; }
       }
 
       tr:hover td {
@@ -118,31 +150,13 @@
       }
     }
   }
-
-  button {
-    padding: 1.2rem 2.4rem;
-    background-color: var(--dark-blue);
-    color: var(--white);
-    border: none;
-    border-radius: 0.8rem;
-    font-size: clamp(1.4rem, 1.4vw, 1.8rem);
-    font-family: var(--poppins);
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: var(--light-blue);
-    }
-  }
 }
 
-/* Responsividade */
+/* Mesma lógica de cor do seu exemplo */
+.valor-positivo { color: #00C853; font-weight: 600; }
+.valor-negativo { color: #FF4B4B; font-weight: 600; }
+
 @media (max-width: 768px) {
-  .container_consulta_heading {
-    padding: 2rem 1rem;
-  }
-  
-  #resultado {
-    padding: 1rem;
-  }
+  .container_sortimento_heading { padding: 2rem 1rem; }
+  #infoLoja, #resultadoSortimento { padding: 1rem; }
 }
