@@ -1,58 +1,67 @@
-let dados;
+let dados = [];
 
-fetch('dados.json')
+fetch('../dados.json')
   .then(response => response.json())
   .then(json => {
     dados = json;
-  });
+    console.log("JSON carregado:", dados.length, "registros");
+  })
+  .catch(err => console.error("Erro ao carregar JSON:", err));
 
 function buscarRE() {
   const re = document.getElementById('reInput').value.trim();
   const container = document.getElementById('resultado');
   container.innerHTML = '';
 
-  if (!dados || !re || !dados[re]) {
+  if (!dados || dados.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color: var(--dark-blue); font-family: var(--poppins); font-size: 1.6rem; margin: 2rem;">Aguarde... carregando os dados.</p>';
+    return;
+  }
+
+  const entradas = dados.filter(item => String(item.RE).trim() === re);
+
+  if (entradas.length === 0) {
     container.innerHTML = '<p style="text-align:center; color: var(--dark-blue); font-family: var(--poppins); font-size: 1.6rem; margin: 2rem;">Nenhum colaborador encontrado para o RE informado.</p>';
     return;
   }
 
-  const entradas = dados[re];
+  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET'];
 
-  // Se quiser que o número de colunas acompanhe o tamanho do VPL:
-  // const meses = (entradas[0]?.vpl ?? []).map((_, i) => ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][i] ?? `M${i+1}`);
-  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN']; // fixo nos 6 primeiros
-
-  let html = `<h2>RE: ${re}</h2>`;
+  let html = `<h2 style="text-align:center; margin-bottom: 1rem;">RE: ${re}</h2>`;
   html += `<div class="table-container"><table>`;
 
-  // Cabeçalho (linha 1): Nome do PDV | VPL (agrupado)
+  // Cabeçalho
   html += `<tr>
-            <th rowspan="2">Nome do PDV</th>
+            <th rowspan="2">PDV</th>
             <th colspan="${meses.length}">VPL</th>
           </tr>`;
 
-  // Cabeçalho (linha 2): meses do VPL
   html += `<tr>`;
-  meses.forEach(m => (html += `<th>${m}</th>`));
+  meses.forEach(m => html += `<th>${m}</th>`);
   html += `</tr>`;
 
-  // Linhas de dados
+  // Linhas
   entradas.forEach(entry => {
     html += `<tr>`;
+    html += `<td>${entry.LOJA}</td>`;
 
-    // Nome do PDV
-    html += `<td>${entry.pdv}</td>`;
-
-    // VPL (primeiros 6 valores)
-    entry.vpl.slice(0, meses.length).forEach(val => {
-      html += `<td>${val}</td>`;
+    meses.forEach(m => {
+      const val = entry[m];
+      if (val === undefined || val === null || val === '') {
+        html += `<td>-</td>`;
+      } else if (typeof val === 'number') {
+        html += `<td>${val.toFixed(1)}</td>`; // 🔹 1 casa decimal
+      } else {
+        const num = parseFloat(val);
+        html += `<td>${isNaN(num) ? '-' : num.toFixed(1)}</td>`;
+      }
     });
 
     html += `</tr>`;
   });
 
   html += `</table></div>`;
-  html += `<div style="text-align:center;"><button onclick="voltar()">← Consultar outro RE</button></div>`;
+  html += `<div style="text-align:center; margin-top: 1rem;"><button onclick="voltar()">← Consultar outro RE</button></div>`;
 
   container.innerHTML = html;
 }

@@ -1,4 +1,3 @@
-// Carrega os dados do inventário (formato array de objetos)
 let dadosInv = [];
 
 fetch('inv.json')
@@ -9,7 +8,7 @@ fetch('inv.json')
   .then(json => {
     dadosInv = Array.isArray(json) ? json : Object.values(json || {});
   })
-  .catch(err => console.error(err));
+  .catch(err => console.error('Erro ao carregar o arquivo inv.json:', err));
 
 function buscarLoja() {
   const input = document.getElementById('inputLoja').value.trim();
@@ -28,7 +27,6 @@ function buscarLoja() {
     return;
   }
 
-  // Filtra por código de loja (mantém comparação por string para evitar problemas)
   const dadosLoja = dadosInv.filter(it => String(it['COD LOJA']) === input);
 
   if (dadosLoja.length === 0) {
@@ -36,42 +34,48 @@ function buscarLoja() {
     return;
   }
 
-  // Cabeçalho (mesmo do seu exemplo)
-  const { LOJA, PROMOTOR } = dadosLoja[0] || {};
+  const lojaNome = dadosLoja[0]['LOJA'] || '-';
+  const promotor = dadosLoja[0]['GESTOR'] || '-';
+
   info.innerHTML = `
-    <p><strong>Loja:</strong> ${LOJA || '-'}</p>
-    <p><strong>Promotor:</strong> ${PROMOTOR || '-'}</p>
+    <p><strong>Loja:</strong> ${lojaNome}</p>
+    <p><strong>Promotor:</strong> ${promotor}</p>
   `;
 
-  // Monta categorias únicas (igual ao exemplo)
-  const categorias = [...new Set(dadosLoja.map(it => String(it['Categoria'] || '').trim()))]
+  const categorias = [...new Set(dadosLoja.map(it => String(it['CATEGORIA'] || '').trim()))]
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
 
-  select.innerHTML = categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-  filtro.style.display = categorias.length ? 'block' : 'none';
-
-  // Renderiza primeira categoria por padrão
-  filtrarCategoria();
+  if (categorias.length > 0) {
+    select.innerHTML = categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    filtro.style.display = 'block';
+    filtrarCategoria();
+  } else {
+    resultado.innerHTML = "<p>Nenhuma categoria encontrada para esta loja.</p>";
+  }
 }
 
-function formatarPct(n) {
-  const v = Number(n);
-  if (Number.isNaN(v)) return '-';
-  return (v * 100).toFixed(2) + '%';
+// ============================
+// Formata número decimal com símbolo %
+// ============================
+function formatarDecimalComPorcentagem(valor) {
+  const num = Number(valor);
+  if (Number.isNaN(num)) return '-';
+  return num.toFixed(3) + '%'; // Exemplo: 0.075%
 }
 
+// ============================
+// Filtra por categoria e monta a tabela
+// ============================
 function filtrarCategoria() {
   const codLoja = document.getElementById('inputLoja').value.trim();
   const categoria = document.getElementById('selectCategoria').value;
   const resultado = document.getElementById('resultadoSortimento');
 
-  // Seleciona os itens da loja + categoria
   const dados = dadosInv.filter(
-    it => String(it['COD LOJA']) === codLoja && String(it['Categoria']) === categoria
+    it => String(it['COD LOJA']) === codLoja && String(it['CATEGORIA']) === categoria
   );
 
-  // Monta tabela (layout idêntico ao exemplo; colunas adaptadas ao inv.json)
   let html = `
     <div class="table-container">
       <table>
@@ -79,25 +83,23 @@ function filtrarCategoria() {
           <tr>
             <th>Categoria</th>
             <th>Descrição SKU</th>
-            <th>Perda (%)</th>
+            <th>Perda %</th>
           </tr>
         </thead>
         <tbody>
   `;
 
   if (!dados.length) {
-    html += `
-      <tr><td colspan="3">Nenhum item encontrado para a categoria selecionada.</td></tr>
-    `;
+    html += `<tr><td colspan="3">Nenhum item encontrado para a categoria selecionada.</td></tr>`;
   } else {
     dados.forEach(item => {
-      const perda = Number(item['Perda (%)']);
-      const perdaClass = perda >= 1 ? 'valor-positivo' : 'valor-negativo';
+      const perda = Number(item['PERDA (%)']);
+      const perdaClass = perda >= 0.1 ? 'valor-positivo' : 'valor-negativo';
       html += `
         <tr>
-          <td>${item['Categoria'] ?? '-'}</td>
-          <td>${item['Descrição SKU'] ?? '-'}</td>
-          <td class="${perdaClass}">${formatarPct(perda)}</td>
+          <td>${item['CATEGORIA'] ?? '-'}</td>
+          <td>${item['DESCRIÇÃO SKU'] ?? '-'}</td>
+          <td class="${perdaClass}">${formatarDecimalComPorcentagem(perda)}</td>
         </tr>
       `;
     });
