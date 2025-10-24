@@ -1,4 +1,3 @@
-
 let dadosInovacao = [];
 
 // Carrega o JSON de inovação (nome do arquivo tem acento)
@@ -19,9 +18,14 @@ function preencherInfoLoja(registros) {
     info.innerHTML = "";
     return;
   }
-  const { LOJA, GESTOR } = registros[0];
+
+  // Corrigido: o campo real no JSON é "CNPJ/Loja"
+  const { GESTOR } = registros[0];
+  const lojaCompleta = registros[0]["CNPJ/Loja"] || '-';
+
+  // Exibe tudo em uma única linha, apenas com "Loja:"
   info.innerHTML = `
-    <p><strong>Loja:</strong> ${LOJA || '-'}</p>
+    <p><strong>Loja:</strong> ${lojaCompleta}</p>
     <p><strong>Gestor:</strong> ${GESTOR || '-'}</p>
   `;
 }
@@ -42,15 +46,14 @@ function buscarLoja() {
     return;
   }
 
-  // Mostra box da loja e ativa filtro
+  // Mostra info e ativa filtro
   preencherInfoLoja(dadosLoja);
   if (filtroContainer) filtroContainer.style.display = "block";
 
   // Popula categorias desta loja
-  const categorias = [...new Set(dadosLoja.map(i => i.Categoria).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const categorias = [...new Set(dadosLoja.map(i => i.Categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   select.innerHTML = '<option value="">Selecione uma categoria</option>' + categorias.map(c => `<option value="${c}">${c}</option>`).join('');
 
-  // Se houver ao menos uma categoria, já filtra a primeira (igual sortimento faz)
   if (categorias.length > 0) {
     select.value = categorias[0];
     filtrarCategoria();

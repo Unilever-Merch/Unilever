@@ -1,9 +1,14 @@
-
 let dadosRE = [];
 let dadosSortimento = [];
 
-fetch('dados.json').then(res => res.json()).then(data => dadosRE = data);
-fetch('dados_sortimento_julho.json').then(res => res.json()).then(data => dadosSortimento = data);
+// Carrega os arquivos JSON
+fetch('dados.json')
+  .then(res => res.json())
+  .then(data => dadosRE = data);
+
+fetch('dados_sortimento.json')
+  .then(res => res.json())
+  .then(data => dadosSortimento = data);
 
 function buscarRE() {
   const input = document.getElementById('inputRE').value.trim();
@@ -44,10 +49,18 @@ function buscarLoja() {
     return;
   }
 
-  const { LOJA, GESTOR, PROMOTOR } = dadosLoja[0];
-  info.innerHTML = `<p><strong>Loja:</strong> ${LOJA}</p><p><strong>Gestor:</strong> ${GESTOR}</p><p><strong>Promotor:</strong> ${PROMOTOR}</p>`;
+  // Corrigido: usa o campo "CNPJ/Loja"
+  const lojaCompleta = dadosLoja[0]["CNPJ/Loja"] || dadosLoja[0].LOJA || "-";
+  const { GESTOR, PROMOTOR } = dadosLoja[0];
 
-  const categorias = [...new Set(dadosLoja.map(item => item.Categoria))];
+  info.innerHTML = `
+    <p><strong>Loja:</strong> ${lojaCompleta}</p>
+    <p><strong>Gestor:</strong> ${GESTOR || '-'}</p>
+    <p><strong>Promotor:</strong> ${PROMOTOR || '-'}</p>
+  `;
+
+  // Popula as categorias da loja
+  const categorias = [...new Set(dadosLoja.map(item => item.Categoria).filter(Boolean))];
   select.innerHTML = categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
   filtro.style.display = "block";
 
@@ -55,7 +68,7 @@ function buscarLoja() {
 }
 
 function formatarNumero(numero) {
-  // Converte para número caso seja string e garante 2 casas decimais
+  // Converte para número e garante 2 casas decimais
   return Number(numero).toFixed(2);
 }
 
@@ -82,12 +95,12 @@ function filtrarCategoria() {
           </tr>
         </thead>
         <tbody>`;
-  
+
   dados.forEach(item => {
     const atingido = formatarNumero(item["% Atingido"]);
     const target = formatarNumero(item["% Target Categoria"]);
     
-    // Adiciona classe para valores positivos/negativos
+    // Classe para destacar desempenho
     const atingidoClass = Number(atingido) >= 100 ? 'valor-positivo' : 'valor-negativo';
     
     html += `
@@ -100,7 +113,7 @@ function filtrarCategoria() {
         <td>${item["Ating. Mês"]}</td>
       </tr>`;
   });
+  
   html += "</tbody></table></div>";
-
   resultado.innerHTML = html;
 }
