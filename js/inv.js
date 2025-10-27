@@ -1,6 +1,6 @@
 let dadosInv = [];
 
-fetch('inv.json')
+fetch('../inv.json')
   .then(res => {
     if (!res.ok) throw new Error('Não foi possível carregar inv.json');
     return res.json();
