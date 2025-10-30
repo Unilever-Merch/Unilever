@@ -31,10 +31,13 @@ function buscarRE() {
   html += `<div class="table-container"><table>`;
 
   // Cabeçalho
-  html += `<tr>
-            <th rowspan="2">PDV</th>
-            <th colspan="${meses.length}">VPL</th>
-          </tr>`;
+  html += `
+    <tr>
+      <th rowspan="2">PDV</th>
+      <th rowspan="2">NEGOCIAÇÕES LOJA</th>
+      <th colspan="${meses.length}">VPL</th>
+    </tr>
+  `;
 
   html += `<tr>`;
   meses.forEach(m => html += `<th>${m}</th>`);
@@ -45,12 +48,16 @@ function buscarRE() {
     html += `<tr>`;
     html += `<td>${entry.LOJA}</td>`;
 
+    // 🔹 Nova coluna NEGOCIAÇÕES LOJA
+    const negociacao = entry['NEGOCIAÇÕES LOJA'] || '-';
+    html += `<td>${negociacao}</td>`;
+
     meses.forEach(m => {
       const val = entry[m];
       if (val === undefined || val === null || val === '') {
         html += `<td>-</td>`;
       } else if (typeof val === 'number') {
-        html += `<td>${val.toFixed(1)}</td>`; // 🔹 1 casa decimal
+        html += `<td>${val.toFixed(1)}</td>`;
       } else {
         const num = parseFloat(val);
         html += `<td>${isNaN(num) ? '-' : num.toFixed(1)}</td>`;
