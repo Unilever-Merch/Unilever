@@ -27,7 +27,8 @@ function buscarLoja() {
     return;
   }
 
-  const dadosLoja = dadosInv.filter(it => String(it['COD LOJA']) === input);
+  // Ajuste: campo correto agora é "COD " (com espaço no JSON)
+  const dadosLoja = dadosInv.filter(it => String(it['COD ']).trim() === input);
 
   if (dadosLoja.length === 0) {
     info.innerHTML = "<p>Loja não encontrada.</p>";
@@ -35,14 +36,14 @@ function buscarLoja() {
   }
 
   const lojaNome = dadosLoja[0]['LOJA'] || '-';
-  const promotor = dadosLoja[0]['GESTOR'] || '-';
+  const promotor = dadosLoja[0]['PROMOTOR'] || '-';
 
   info.innerHTML = `
     <p><strong>Loja:</strong> ${lojaNome}</p>
     <p><strong>Promotor:</strong> ${promotor}</p>
   `;
 
-  const categorias = [...new Set(dadosLoja.map(it => String(it['CATEGORIA'] || '').trim()))]
+  const categorias = [...new Set(dadosLoja.map(it => String(it['Categoria'] || '').trim()))]
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
 
@@ -73,7 +74,7 @@ function filtrarCategoria() {
   const resultado = document.getElementById('resultadoSortimento');
 
   const dados = dadosInv.filter(
-    it => String(it['COD LOJA']) === codLoja && String(it['CATEGORIA']) === categoria
+    it => String(it['COD ']).trim() === codLoja && String(it['Categoria']).trim() === categoria
   );
 
   let html = `
@@ -83,6 +84,7 @@ function filtrarCategoria() {
           <tr>
             <th>Categoria</th>
             <th>Descrição SKU</th>
+            <th>EAN</th>
             <th>Perda %</th>
           </tr>
         </thead>
@@ -90,15 +92,16 @@ function filtrarCategoria() {
   `;
 
   if (!dados.length) {
-    html += `<tr><td colspan="3">Nenhum item encontrado para a categoria selecionada.</td></tr>`;
+    html += `<tr><td colspan="4">Nenhum item encontrado para a categoria selecionada.</td></tr>`;
   } else {
     dados.forEach(item => {
-      const perda = Number(item['PERDA (%)']);
+      const perda = Number(item['Perda (%)']);
       const perdaClass = perda >= 0.1 ? 'valor-positivo' : 'valor-negativo';
       html += `
         <tr>
-          <td>${item['CATEGORIA'] ?? '-'}</td>
-          <td>${item['DESCRIÇÃO SKU'] ?? '-'}</td>
+          <td>${item['Categoria'] ?? '-'}</td>
+          <td>${item['Descrição SKU'] ?? '-'}</td>
+          <td>${item['Ean'] ?? '-'}</td>
           <td class="${perdaClass}">${formatarDecimalComPorcentagem(perda)}</td>
         </tr>
       `;
