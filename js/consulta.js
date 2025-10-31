@@ -48,9 +48,9 @@ function buscarRE() {
     html += `<tr>`;
     html += `<td>${entry.LOJA}</td>`;
 
-    // 🔹 Nova coluna NEGOCIAÇÕES LOJA
+    // 🔹 Nova coluna NEGOCIAÇÕES LOJA em negrito
     const negociacao = entry['NEGOCIAÇÕES LOJA'] || '-';
-    html += `<td>${negociacao}</td>`;
+    html += `<td class="negociacao-bold">${negociacao}</td>`;
 
     meses.forEach(m => {
       const val = entry[m];
