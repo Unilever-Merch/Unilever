@@ -152,3 +152,8 @@
   color: #0f0e9a; 
   background-color: #f2f2ff;
 }
+
+.centralizado {
+  text-align: center !important;
+  vertical-align: middle !important;
+}

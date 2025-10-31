@@ -48,19 +48,27 @@ function buscarRE() {
     html += `<tr>`;
     html += `<td>${entry.LOJA}</td>`;
 
-    // 🔹 Nova coluna NEGOCIAÇÕES LOJA em negrito
-    const negociacao = entry['NEGOCIAÇÕES LOJA'] || '-';
-    html += `<td class="negociacao-bold">${negociacao}</td>`;
+    // Valor da coluna “NEGOCIAÇÕES LOJA”
+    let negociacao = entry['NEGOCIAÇÕES LOJA'] || '-';
+    if (typeof negociacao === 'string' && negociacao.toLowerCase().includes('negociação tester')) {
+      negociacao = 'LOJA NEGOCIADA TESTER OLEO CORPORAL';
+    }
+
+    // Aplica a classe centralizado se for “-”
+    const classeNegociacao = negociacao === '-' 
+      ? 'negociacao-bold centralizado' 
+      : 'negociacao-bold';
+    html += `<td class="${classeNegociacao}">${negociacao}</td>`;
 
     meses.forEach(m => {
       const val = entry[m];
       if (val === undefined || val === null || val === '') {
-        html += `<td>-</td>`;
+        html += `<td class="centralizado">-</td>`;
       } else if (typeof val === 'number') {
         html += `<td>${val.toFixed(1)}</td>`;
       } else {
         const num = parseFloat(val);
-        html += `<td>${isNaN(num) ? '-' : num.toFixed(1)}</td>`;
+        html += `<td>${isNaN(num) ? '<span class="centralizado">-</span>' : num.toFixed(1)}</td>`;
       }
     });
 
