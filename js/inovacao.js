@@ -12,6 +12,7 @@ function formatarNumero(n) {
   return num.toFixed(2);
 }
 
+// Remove TOTALMENTE o gestor
 function preencherInfoLoja(registros) {
   const info = document.getElementById('infoLoja');
   if (!registros || registros.length === 0) {
@@ -19,14 +20,12 @@ function preencherInfoLoja(registros) {
     return;
   }
 
-  // Corrigido: o campo real no JSON é "CNPJ/Loja"
-  const { GESTOR } = registros[0];
+  // Campo correto do JSON
   const lojaCompleta = registros[0]["CNPJ/Loja"] || '-';
 
-  // Exibe tudo em uma única linha, apenas com "Loja:"
+  // AGORA SOMENTE ISSO É EXIBIDO
   info.innerHTML = `
     <p><strong>Loja:</strong> ${lojaCompleta}</p>
-    <p><strong>Gestor:</strong> ${GESTOR || '-'}</p>
   `;
 }
 
@@ -37,7 +36,9 @@ function buscarLoja() {
   const select = document.getElementById('selectCategoria');
   const resultado = document.getElementById('resultadoSortimento');
 
-  const dadosLoja = dadosInovacao.filter(item => String(item["COD LOJA"]).trim() === input);
+  const dadosLoja = dadosInovacao.filter(
+    item => String(item["COD LOJA"]).trim() === input
+  );
 
   if (dadosLoja.length === 0) {
     info.innerHTML = "<p>Loja não encontrada.</p>";
@@ -46,13 +47,17 @@ function buscarLoja() {
     return;
   }
 
-  // Mostra info e ativa filtro
   preencherInfoLoja(dadosLoja);
   if (filtroContainer) filtroContainer.style.display = "block";
 
-  // Popula categorias desta loja
-  const categorias = [...new Set(dadosLoja.map(i => i.Categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  select.innerHTML = '<option value="">Selecione uma categoria</option>' + categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+  // Popula categorias
+  const categorias = [...new Set(
+    dadosLoja.map(i => i.Categoria).filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+  select.innerHTML =
+    '<option value="">Selecione uma categoria</option>' +
+    categorias.map(c => `<option value="${c}">${c}</option>`).join('');
 
   if (categorias.length > 0) {
     select.value = categorias[0];
@@ -68,7 +73,8 @@ function filtrarCategoria() {
   const resultado = document.getElementById('resultadoSortimento');
 
   const dados = dadosInovacao.filter(item =>
-    String(item["COD LOJA"]).trim() === codLoja && item.Categoria === categoria
+    String(item["COD LOJA"]).trim() === codLoja &&
+    item.Categoria === categoria
   );
 
   if (dados.length === 0) {
@@ -94,9 +100,14 @@ function filtrarCategoria() {
   dados.forEach(item => {
     const atingido = formatarNumero(item['% Atingido']);
     const target = formatarNumero(item['% Target Categoria']);
+
     const atingidoVal = Number(String(item['% Atingido']).replace(',', '.'));
     const targetVal = Number(String(item['% Target Categoria']).replace(',', '.'));
-    const atingidoClass = (isFinite(atingidoVal) && isFinite(targetVal) && (atingidoVal >= targetVal)) ? 'atingido' : 'nao-atingido';
+
+    const atingidoClass =
+      (isFinite(atingidoVal) && isFinite(targetVal) && atingidoVal >= targetVal)
+        ? 'atingido'
+        : 'nao-atingido';
 
     html += `
       <tr>

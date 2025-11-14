@@ -112,8 +112,9 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      white-space: nowrap;
-
+      white-space: normal;     /* permite quebrar linhas */
+      word-wrap: break-word;   /* força quebra */
+      
       th,
       td {
         padding: 1.6rem;
@@ -132,12 +133,13 @@
       td {
         font-size: clamp(1.2rem, 1.2vw, 1.4rem);
         color: var(--dark-blue);
+      }
 
-        &:first-child {
-          font-weight: 600;
-          max-width: 30rem;
-          white-space: normal;
-        }
+      /* QUEBRA AUTOMÁTICA DO PRODUTO */
+      td:nth-child(2) {
+        white-space: normal !important;
+        word-wrap: break-word;
+        max-width: 400px; /* largura ideal */
       }
 
       tr:last-child {

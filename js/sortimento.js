@@ -10,6 +10,9 @@ fetch('dados_sortimento.json')
   .then(res => res.json())
   .then(data => dadosSortimento = data);
 
+// =============================
+// BUSCA RE
+// =============================
 function buscarRE() {
   const input = document.getElementById('inputRE').value.trim();
   const resultado = document.getElementById('resultadoRE');
@@ -33,6 +36,9 @@ function buscarRE() {
   resultado.innerHTML = html;
 }
 
+// =============================
+// BUSCA LOJA (SEM GESTOR E PROMOTOR)
+// =============================
 function buscarLoja() {
   const input = document.getElementById('inputLoja').value.trim();
   const info = document.getElementById('infoLoja');
@@ -49,17 +55,14 @@ function buscarLoja() {
     return;
   }
 
-  // Corrigido: usa o campo "CNPJ/Loja"
+  // Exibe somente o CNPJ/Loja — SEM GESTOR E PROMOTOR
   const lojaCompleta = dadosLoja[0]["CNPJ/Loja"] || dadosLoja[0].LOJA || "-";
-  const { GESTOR, PROMOTOR } = dadosLoja[0];
 
   info.innerHTML = `
     <p><strong>Loja:</strong> ${lojaCompleta}</p>
-    <p><strong>Gestor:</strong> ${GESTOR || '-'}</p>
-    <p><strong>Promotor:</strong> ${PROMOTOR || '-'}</p>
   `;
 
-  // Popula as categorias da loja
+  // Preenche categorias
   const categorias = [...new Set(dadosLoja.map(item => item.Categoria).filter(Boolean))];
   select.innerHTML = categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
   filtro.style.display = "block";
@@ -67,11 +70,16 @@ function buscarLoja() {
   filtrarCategoria();
 }
 
+// =============================
+// FORMATA VALOR COM DUAS CASAS
+// =============================
 function formatarNumero(numero) {
-  // Converte para número e garante 2 casas decimais
   return Number(numero).toFixed(2);
 }
 
+// =============================
+// FILTRAR TABELA POR CATEGORIA
+// =============================
 function filtrarCategoria() {
   const codLoja = document.getElementById('inputLoja').value.trim();
   const categoria = document.getElementById('selectCategoria').value;
@@ -99,10 +107,8 @@ function filtrarCategoria() {
   dados.forEach(item => {
     const atingido = formatarNumero(item["% Atingido"]);
     const target = formatarNumero(item["% Target Categoria"]);
-    
-    // Classe para destacar desempenho
     const atingidoClass = Number(atingido) >= 100 ? 'valor-positivo' : 'valor-negativo';
-    
+
     html += `
       <tr>
         <td>${item.Mes}</td>
@@ -113,7 +119,7 @@ function filtrarCategoria() {
         <td>${item["Ating. Mês"]}</td>
       </tr>`;
   });
-  
+
   html += "</tbody></table></div>";
   resultado.innerHTML = html;
 }
