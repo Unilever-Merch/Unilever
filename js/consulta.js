@@ -25,7 +25,7 @@ function buscarRE() {
     return;
   }
 
-  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET'];
+  const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT'];
 
   let html = `<h2 style="text-align:center; margin-bottom: 1rem;">RE: ${re}</h2>`;
   html += `<div class="table-container"><table>`;
