@@ -1,5 +1,8 @@
 let dadosInv = [];
 
+// ==========================================
+// Carrega o JSON de INV
+// ==========================================
 fetch('inv.json')
   .then(res => {
     if (!res.ok) throw new Error('Não foi possível carregar inv.json');
@@ -7,9 +10,14 @@ fetch('inv.json')
   })
   .then(json => {
     dadosInv = Array.isArray(json) ? json : Object.values(json || {});
+    console.log("INV carregado:", dadosInv.length, "registros");
   })
-  .catch(err => console.error('Erro ao carregar o arquivo inv.json:', err));
+  .catch(err => console.error('Erro ao carregar inv.json:', err));
 
+
+// ==========================================
+// Busca a loja pelo código
+// ==========================================
 function buscarLoja() {
   const input = document.getElementById('inputLoja').value.trim();
   const info = document.getElementById('infoLoja');
@@ -17,7 +25,6 @@ function buscarLoja() {
   const select = document.getElementById('selectCategoria');
   const resultado = document.getElementById('resultadoSortimento');
 
-  // Limpa saída
   info.innerHTML = '';
   resultado.innerHTML = '';
   filtro.style.display = 'none';
@@ -27,8 +34,8 @@ function buscarLoja() {
     return;
   }
 
-  // Ajuste: campo correto agora é "COD " (com espaço no JSON)
-  const dadosLoja = dadosInv.filter(it => String(it['COD ']).trim() === input);
+  // Campo correto → "COD"
+  const dadosLoja = dadosInv.filter(it => String(it['COD']).trim() === input);
 
   if (dadosLoja.length === 0) {
     info.innerHTML = "<p>Loja não encontrada.</p>";
@@ -43,7 +50,8 @@ function buscarLoja() {
     <p><strong>Promotor:</strong> ${promotor}</p>
   `;
 
-  const categorias = [...new Set(dadosLoja.map(it => String(it['Categoria'] || '').trim()))]
+  // Categorias corretas → "CATEGORIA"
+  const categorias = [...new Set(dadosLoja.map(it => String(it['CATEGORIA'] || '').trim()))]
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
 
@@ -56,25 +64,29 @@ function buscarLoja() {
   }
 }
 
-// ============================
-// Formata número decimal com símbolo %
-// ============================
+
+// ==========================================
+// Formata Perda (%) igual ao modelo do print
+// Exemplo: 0.147 → 14.7%
+// ==========================================
 function formatarDecimalComPorcentagem(valor) {
   const num = Number(valor);
   if (Number.isNaN(num)) return '-';
-  return num.toFixed(3) + '%'; // Exemplo: 0.075%
+  return (num * 100).toFixed(1) + '%';  
 }
 
-// ============================
+
+// ==========================================
 // Filtra por categoria e monta a tabela
-// ============================
+// ==========================================
 function filtrarCategoria() {
   const codLoja = document.getElementById('inputLoja').value.trim();
   const categoria = document.getElementById('selectCategoria').value;
   const resultado = document.getElementById('resultadoSortimento');
 
   const dados = dadosInv.filter(
-    it => String(it['COD ']).trim() === codLoja && String(it['Categoria']).trim() === categoria
+    it => String(it['COD']).trim() === codLoja &&
+          String(it['CATEGORIA']).trim() === categoria
   );
 
   let html = `
@@ -85,7 +97,7 @@ function filtrarCategoria() {
             <th>Categoria</th>
             <th>Descrição SKU</th>
             <th>EAN</th>
-            <th>Perda %</th>
+            <th>Perda (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -97,11 +109,12 @@ function filtrarCategoria() {
     dados.forEach(item => {
       const perda = Number(item['Perda (%)']);
       const perdaClass = perda >= 0.1 ? 'valor-positivo' : 'valor-negativo';
+
       html += `
         <tr>
-          <td>${item['Categoria'] ?? '-'}</td>
-          <td>${item['Descrição SKU'] ?? '-'}</td>
-          <td>${item['Ean'] ?? '-'}</td>
+          <td>${item['CATEGORIA'] ?? '-'}</td>
+          <td>${item['DESC SKU'] ?? '-'}</td>
+          <td>${item['EAN'] ?? '-'}</td>
           <td class="${perdaClass}">${formatarDecimalComPorcentagem(perda)}</td>
         </tr>
       `;
